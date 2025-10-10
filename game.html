@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NEXUS - Gaming Character Showcase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0d1117] text-[#f0f6fc] font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-[#161b22] border-b border-[#30363d]">
+    <div class="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-[#00d9ff]">NEXUS</div>
+      <ul class="hidden md:flex gap-8">
+        <li><a href="#" class="text-[#8b949e] hover:text-[#00d9ff]">Home</a></li>
+        <li><a href="#" class="text-[#8b949e] hover:text-[#00d9ff]">Profile</a></li>
+        <li><a href="#" class="text-[#8b949e] hover:text-[#00d9ff]">Character</a></li>
+        <li><a href="#" class="text-[#8b949e] hover:text-[#00d9ff]">Game</a></li>
+      </ul>
+      <button class="bg-[#00d9ff] text-[#0d1117] px-5 py-2 rounded-lg font-bold hover:bg-[#00c2e6]">For More Info</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-7xl mx-auto px-5 py-20 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">INTRODUCING<br>NEW<br>CHARACTER</h1>
+      <p class="text-lg text-[#8b949e] mb-6">Shrouded in mystery, a shadow emerges from the past to reshape the destiny of worlds...</p>
+      <div class="flex gap-4">
+        <button class="bg-[#00d9ff] text-[#0d1117] px-5 py-2 rounded-lg font-bold hover:bg-[#00c2e6]">Description</button>
+        <button class="border-2 border-[#00d9ff] px-5 py-2 rounded-lg hover:bg-[#161b22]">Next for Detail</button>
+      </div>
+    </div>
+    <div class="bg-gradient-to-tr from-[#00d9ff]/20 to-transparent border-2 border-[#00d9ff] rounded-2xl p-6 shadow-[0_0_40px_rgba(0,217,255,0.3)]">
+      <img src="https://64.media.tumblr.com/75d947de09fd22c5b3911188e98015f2/tumblr_o0xx1bP28M1rpvyqgo1_500.gif" class="w-full rounded-lg" alt="Hero Character"/>
+    </div>
+  </section>
+
+  <!-- Character Selection -->
+  <section class="max-w-7xl mx-auto px-5">
+    <h2 class="text-center text-3xl md:text-4xl font-bold mb-10">Character to Play</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mb-20" id="character-cards">
+      <!-- Character cards -->
+      <div class="character-card bg-[#161b22] border border-[#30363d] rounded-xl p-5 text-center hover:border-[#00d9ff] hover:shadow-[0_0_20px_rgba(0,217,255,0.2)] cursor-pointer" 
+           data-name="Asuka Renjou"
+           data-role="Fire Warrior"
+           data-image="https://i.pinimg.com/originals/f1/5d/d0/f15dd02c7fb3f45d7d6c9ec4dad8bd51.gif"
+           data-weapon="Flame Blade"
+           data-ability="Inferno Strike"
+           data-power="★★★★"
+           data-attack="80%"
+           data-defense="60%"
+           data-magic="50%"
+           data-speed="75%">
+        <img src="https://i.pinimg.com/originals/f1/5d/d0/f15dd02c7fb3f45d7d6c9ec4dad8bd51.gif" class="w-20 h-20 rounded-full border-2 border-[#30363d] mx-auto mb-4"/>
+        <div class="font-bold">Asuka Renjou</div>
+        <div class="text-sm text-[#8b949e]">Fire Warrior</div>
+      </div>
+
+      <div class="character-card bg-[#161b22] border border-[#30363d] rounded-xl p-5 text-center hover:border-[#00d9ff] hover:shadow-[0_0_20px_rgba(0,217,255,0.2)] cursor-pointer"
+           data-name="Takeru Hoshino"
+           data-role="Storm Blade"
+           data-image="https://upload-os-bbs.hoyolab.com/upload/2024/02/11/149530518/85d83b597298a20256f0b492d954d262_3305300767818376038.gif"
+           data-weapon="Thunder Saber"
+           data-ability="Lightning Slash"
+           data-power="★★★"
+           data-attack="75%"
+           data-defense="70%"
+           data-magic="65%"
+           data-speed="80%">
+        <img src="https://upload-os-bbs.hoyolab.com/upload/2024/02/11/149530518/85d83b597298a20256f0b492d954d262_3305300767818376038.gif" class="w-20 h-20 rounded-full border-2 border-[#30363d] mx-auto mb-4"/>
+        <div class="font-bold">Takeru Hoshino</div>
+        <div class="text-sm text-[#8b949e]">Storm Blade</div>
+      </div>
+
+      <div class="character-card bg-[#161b22] border-2 border-[#00d9ff] rounded-xl p-5 text-center shadow-[0_0_30px_rgba(0,217,255,0.4)] cursor-pointer"
+           data-name="Lyara Veylith Arata"
+           data-role="Crystal Protector"
+           data-image="https://i.pinimg.com/originals/a5/cb/87/a5cb87730ef6375e2abea9f04d5da412.gif"
+           data-weapon="Tenryuu"
+           data-ability="Crystal Arrow"
+           data-power="★★★★★"
+           data-attack="85%"
+           data-defense="70%"
+           data-magic="95%"
+           data-speed="78%">
+        <img src="https://i.pinimg.com/originals/a5/cb/87/a5cb87730ef6375e2abea9f04d5da412.gif" class="w-20 h-20 rounded-full border-2 border-[#00d9ff] mx-auto mb-4"/>
+        <div class="font-bold">Lyara Veylith Arata</div>
+        <div class="text-sm text-[#8b949e]">Crystal Protector</div>
+      </div>
+
+      <div class="character-card bg-[#161b22] border border-[#30363d] rounded-xl p-5 text-center hover:border-[#00d9ff] hover:shadow-[0_0_20px_rgba(0,217,255,0.2)] cursor-pointer"
+           data-name="Shiro Kazama"
+           data-role="Ice Guardian"
+           data-image="https://media.tenor.com/B42KQtAgI9IAAAAM/shibuya-station-haru.gif"
+           data-weapon="Frost Saber"
+           data-ability="Ice Shard"
+           data-power="★★★★"
+           data-attack="70%"
+           data-defense="85%"
+           data-magic="90%"
+           data-speed="60%">
+        <img src="https://media.tenor.com/B42KQtAgI9IAAAAM/shibuya-station-haru.gif" class="w-20 h-20 rounded-full border-2 border-[#30363d] mx-auto mb-4"/>
+        <div class="font-bold">Shiro Kazama</div>
+        <div class="text-sm text-[#8b949e]">Ice Guardian</div>
+      </div>
+
+      <div class="character-card bg-[#161b22] border border-[#30363d] rounded-xl p-5 text-center hover:border-[#00d9ff] hover:shadow-[0_0_20px_rgba(0,217,255,0.2)] cursor-pointer"
+           data-name="Kaede Kisaragi"
+           data-role="Nature Sage"
+           data-image="https://i.gifer.com/GWaf.gif"
+           data-weapon="Nature Staff"
+           data-ability="Healing Bloom"
+           data-power="★★★"
+           data-attack="65%"
+           data-defense="70%"
+           data-magic="80%"
+           data-speed="75%">
+        <img src="https://i.gifer.com/GWaf.gif" class="w-20 h-20 rounded-full border-2 border-[#30363d] mx-auto mb-4"/>
+        <div class="font-bold">Kaede Kisaragi</div>
+        <div class="text-sm text-[#8b949e]">Nature Sage</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Character Details -->
+  <section class="max-w-7xl mx-auto px-5">
+    <h2 class="text-center text-3xl md:text-4xl font-bold mb-10">Character Select</h2>
+    <div class="grid md:grid-cols-2 gap-10 mb-20">
+      <div>
+        <div id="char-image" class="bg-gradient-to-tr from-[#00d9ff]/20 to-[#161b22] border-2 border-[#00d9ff] rounded-2xl p-6 shadow-[0_0_40px_rgba(0,217,255,0.3)] mb-6">
+          <img src="https://i.pinimg.com/originals/a5/cb/87/a5cb87730ef6375e2abea9f04d5da412.gif" class="w-full rounded-lg"/>
+        </div>
+        <div id="char-description" class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
+          <h3 id="char-name" class="text-2xl text-[#00d9ff] font-bold mb-3">Lyara Veylith Arata</h3>
+          <p id="char-role" class="text-[#8b949e]">Lyara has a gentle yet strong impression with her crystalline armor that reflects her pure heart. As the Crystal Protector, she wields ancient powers to defend the realm from darkness.</p>
+          <button class="mt-5 bg-[#00d9ff] text-[#0d1117] px-5 py-2 rounded-lg font-bold hover:bg-[#00c2e6]">Read More</button>
+        </div>
+      </div>
+      <div>
+        <div id="char-abilities" class="bg-[#161b22] border border-[#30363d] rounded-xl p-6 mb-6">
+          <h4 class="text-xl text-[#00d9ff] mb-4">Special Abilities</h4>
+          <div class="mb-4">
+            <div class="font-bold text-[#00d9ff]" id="char-weapon">⚔️ Weapon: Tenryuu</div>
+            <p id="char-ability" class="text-sm text-[#8b949e]">A legendary crystal blade that channels elemental energy and can cut through dimensions itself.</p>
+          </div>
+          <div>
+            <div class="font-bold text-[#00d9ff]">⭐ Power Rating</div>
+            <div id="char-power" class="text-yellow-400 text-xl">★★★★★</div>
+          </div>
+        </div>
+        <div id="char-stats" class="bg-[#161b22] border border-[#30363d] rounded-xl p-6">
+          <h4 class="text-xl text-[#00d9ff] mb-4">Character Stats</h4>
+          <div class="mb-4">
+            <div class="flex justify-between mb-1"><span>Attack</span><span id="stat-attack">85%</span></div>
+            <div class="h-2 bg-[#30363d] rounded"><div id="stat-attack-bar" class="h-2 w-[85%] bg-orange-500 rounded"></div></div>
+          </div>
+          <div class="mb-4">
+            <div class="flex justify-between mb-1"><span>Defense</span><span id="stat-defense">70%</span></div>
+            <div class="h-2 bg-[#30363d] rounded"><div id="stat-defense-bar" class="h-2 w-[70%] bg-blue-500 rounded"></div></div>
+          </div>
+          <div class="mb-4">
+            <div class="flex justify-between mb-1"><span>Magic</span><span id="stat-magic">95%</span></div>
+            <div class="h-2 bg-[#30363d] rounded"><div id="stat-magic-bar" class="h-2 w-[95%] bg-purple-500 rounded"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><span>Speed</span><span id="stat-speed">78%</span></div>
+            <div class="h-2 bg-[#30363d] rounded"><div id="stat-speed-bar" class="h-2 w-[78%] bg-green-500 rounded"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#30363d] py-6 mt-20">
+    <div class="max-w-7xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 bg-[#00d9ff] rounded-sm"></div>
+        <span class="text-xl font-bold text-[#00d9ff]">NEXUS</span>
+      </div>
+      <p class="text-[#8b949e]">© 2024 Nexus Gaming. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    const cards = document.querySelectorAll('.character-card');
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelector('#char-image img').src = card.dataset.image;
+        document.querySelector('#char-name').innerText = card.dataset.name;
+        document.querySelector('#char-role').innerText = card.dataset.role;
+        document.querySelector('#char-weapon').innerText = '⚔️ Weapon: ' + card.dataset.weapon;
+        document.querySelector('#char-ability').innerText = card.dataset.ability;
+        document.querySelector('#char-power').innerText = card.dataset.power;
+
+        document.querySelector('#stat-attack').innerText = card.dataset.attack;
+        document.querySelector('#stat-attack-bar').style.width = card.dataset.attack;
+
+        document.querySelector('#stat-defense').innerText = card.dataset.defense;
+        document.querySelector('#stat-defense-bar').style.width = card.dataset.defense;
+
+        document.querySelector('#stat-magic').innerText = card.dataset.magic;
+        document.querySelector('#stat-magic-bar').style.width = card.dataset.magic;
+
+        document.querySelector('#stat-speed').innerText = card.dataset.speed;
+        document.querySelector('#stat-speed-bar').style.width = card.dataset.speed;
+      });
+    });
+  </script>
+
+</body>
+</html>

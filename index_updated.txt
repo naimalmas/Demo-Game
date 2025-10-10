@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Silvie - AI Assistant 🌸</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #ff7eb9, #ff758c);
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Floating hearts */
+    #heart-container {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #ff466d;
+      transform: rotate(45deg);
+      animation: float 4s linear forwards;
+      filter: drop-shadow(0 0 2px #ff88aa);
+      opacity: 0.9;
+      will-change: transform, opacity;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #ff466d;
+      border-radius: 50%;
+    }
+    .heart::before { top: -10px; left: 0; }
+    .heart::after { top: 0; left: -10px; }
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-250px) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    /* Anime girl floating */
+    .anime-girl {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      width: 180px;
+      user-select: none;
+      animation: floatGirl 4s ease-in-out infinite;
+      z-index: 5;
+      filter: drop-shadow(0 0 8px #ff71a7);
+    }
+    @keyframes floatGirl {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* Chat bubble */
+    .message-ai {
+      color: #86e0ff;
+      background: #202a3b;
+      padding: 12px 16px;
+      border-radius: 20px 20px 20px 5px;
+      max-width: 75%;
+      font-weight: 600;
+      box-shadow: 0 0 10px #61a3ff99;
+      user-select: text;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .message-user {
+      color: #fcd34d;
+      background: #6b4f4f;
+      padding: 12px 16px;
+      border-radius: 20px 20px 5px 20px;
+      max-width: 75%;
+      margin-left: auto;
+      font-weight: 600;
+      box-shadow: 0 0 8px #ffc93dcc;
+      user-select: text;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    /* Scrollbar hidden */
+    #chat-box::-webkit-scrollbar {
+      display: none;
+    }
+    #chat-box {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Typing indicator */
+    .typing {
+      font-style: italic;
+      color: #aaa;
+      animation: blink 1.2s infinite;
+      user-select: none;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Buttons style */
+    button, .btn {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:disabled, .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Modal background */
+    .modal-bg {
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px);
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* Modal content */
+    .modal {
+      background: #1e1e2f;
+      border-radius: 20px;
+      max-width: 480px;
+      width: 90%;
+      padding: 24px 32px;
+      box-shadow: 0 0 20px #ff408199;
+      color: #fddde6;
+      font-weight: 600;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    /* Close button */
+    .modal .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 20px;
+      font-size: 24px;
+      color: #ff4081;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .modal .close-btn:hover {
+      color: #ff78a1;
+    }
+
+    /* Input and textarea */
+    input, textarea, select {
+      border-radius: 12px;
+      padding: 10px 14px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: #222;
+      color: #eee;
+      resize: none;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 0 6px #ff3e6d88 inset;
+      transition: box-shadow 0.3s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      box-shadow: 0 0 10px #ff3e6dcc inset;
+    }
+
+    /* Scroll chat box smoothly */
+    #chat-box {
+      scroll-behavior: smooth;
+    }
+
+    /* Silvie diary textarea */
+    #diary-text {
+      min-height: 120px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #2a2733;
+      color: #fddde6;
+      font-weight: 600;
+      box-shadow: 0 0 12px #ff6f99 inset;
+      resize: vertical;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .anime-girl {
+        width: 120px;
+        bottom: 8px;
+        right: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Hearts Container -->
+  <div id="heart-container"></div>
+
+  <!-- Anime Girl -->
+  <img
+    src="https://pngimg.com/d/anime_girl_PNG60.png"
+    alt="Silvie Anime Girl"
+    class="anime-girl"
+    draggable="false"
+  />
+
+  <!-- Main Container -->
+  <main
+    class="max-w-4xl mx-auto mt-12 bg-[#1e1e2f]/90 rounded-3xl shadow-2xl backdrop-blur-md relative z-10 flex flex-col"
+    style="height: 85vh;"
+  >
+    <!-- Profile -->
+    <section
+      class="flex items-center gap-6 px-8 py-6 border-b border-pink-400/30 select-none"
+    >
+      <img
+        src="https://c.tenor.com/89QSIUPhqBkAAAAC/tenor.gif"
+        alt="Silvie Profile"
+        class="w-28 h-28 rounded-full border-4 border-pink-400 shadow-lg object-cover"
+        draggable="false"
+      />
+      <div>
+        <h1 class="text-4xl font-extrabold tracking-wide">Silvie 💖</h1>
+        <p class="text-pink-300 font-semibold mt-1 select-text">
+          Naim Almas's Virtual Assistant
+        </p>
+      </div>
+    </section>
+
+    <!-- Chat Box -->
+    <section
+      id="chat-box"
+      class="flex-1 p-6 space-y-5 overflow-y-auto scrollbar-hide"
+      aria-live="polite"
+      aria-atomic="false"
+      role="log"
+    >
+      <div class="message-ai" role="article">
+        <strong>Silvie:</strong>  Hey Iam selvie... How Can I Assist you? 
+      </div>
+    </section>
+
+    <!-- Input & Controls -->
+    <section
+      class="flex flex-wrap gap-3 items-center p-6 bg-[#27263b] rounded-b-3xl select-none"
+    >
+      <input
+        type="text"
+        id="user-input"
+        aria-label="Type your message"
+        placeholder="Say something romantic..."
+        class="flex-grow min-w-[220px] px-5 py-3 rounded-2xl bg-[#333547] text-white font-semibold outline-none focus:ring-2 focus:ring-pink-400 transition"
+        autocomplete="off"
+      />
+      <button
+        id="send-btn"
+        class="bg-pink-500 hover:bg-pink-600 active:bg-pink-700 transition text-white font-bold rounded-2xl px-6 py-3 shadow-md"
+        title="Send Message"
+        aria-label="Send Message"
+      >
+        Send
+      </button>
+      <button
+        id="mic-btn"
+        class="bg-[#444559] hover:bg-[#5c5c72] active:bg-[#6d6d8f] rounded-2xl px-4 py-3 text-2xl"
+        title="Speak to Silvie"
+        aria-label="Speak to Silvie"
+      >
+        🎤
+      </button>
+      <button
+        id="clear-btn"
+        class="text-pink-300 hover:text-pink-400 text-xl"
+        title="Clear Chat"
+        aria-label="Clear Chat"
+      >
+        🗑️
+      </button>
+      <button
+        id="theme-btn"
+        class="text-pink-300 hover:text-pink-400 text-xl"
+        title="Toggle Theme"
+        aria-label="Toggle Theme"
+      >
+        🌓
+      </button>
+      <button
+        id="personality-btn"
+        class="bg-pink-600 hover:bg-pink-700 rounded-2xl px-4 py-2 font-semibold"
+        title="Change Personality"
+        aria-label="Change Personality"
+      >
+        Personality: Cute
+      </button>
+      <button
+        id="lang-btn"
+        class="bg-pink-600 hover:bg-pink-700 rounded-2xl px-4 py-2 font-semibold"
+        title="Switch Language"
+        aria-label="Switch Language"
+      >
+        Language: English
+      </button>
+      <button
+        id="diary-btn"
+        class="bg-pink-600 hover:bg-pink-700 rounded-2xl px-4 py-2 font-semibold"
+        title="Open Silvie Diary"
+        aria-label="Open Silvie Diary"
+      >
+        Diary
+      </button>
+      <button
+        id="quiz-btn"
+        class="bg-pink-600 hover:bg-pink-700 rounded-2xl px-4 py-2 font-semibold"
+        title="Play Love Quiz"
+        aria-label="Play Love Quiz"
+      >
+        Love Quiz
+      </button>
+      <button
+        id="selfie-btn"
+        class="bg-pink-600 hover:bg-pink-700 rounded-2xl px-4 py-2 font-semibold"
+        title="Send Selfie"
+        aria-label="Send Selfie"
+      >
+        Selfie
+      </button>
+    </section>
+  </main>
+
+  <!-- Silvie Diary Modal -->
+  <div
+    id="diary-modal"
+    class="modal-bg hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="diary-title"
+  >
+    <div class="modal">
+      <button class="close-btn" aria-label="Close Diary">&times;</button>
+      <h2 id="diary-title" class="text-2xl mb-4">Silvie's Diary 📔</h2>
+      <textarea
+        id="diary-text"
+        placeholder="Write your feelings here... Silvie will read them."
+        aria-label="Diary Text"
+      ></textarea>
+      <button id="save-diary-btn" class="btn bg-pink-500 mt-4 w-full rounded-xl">
+        Save Diary
+      </button>
+    </div>
+  </div>
+
+  <!-- Love Quiz Modal -->
+  <div
+    id="quiz-modal"
+    class="modal-bg hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="quiz-title"
+  >
+    <div class="modal">
+      <button class="close-btn" aria-label="Close Quiz">&times;</button>
+      <h2 id="quiz-title" class="text-2xl mb-4">Love Quiz 💘</h2>
+      <div id="quiz-content" class="mb-6 font-semibold"></div>
+      <button id="quiz-next-btn" class="btn bg-pink-500 w-full rounded-xl py-3">
+        Next
+      </button>
+    </div>
+  </div>
+
+  <!-- Selfie Modal -->
+  <div
+    id="selfie-modal"
+    class="modal-bg hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="selfie-title"
+  >
+    <div class="modal">
+      <button class="close-btn" aria-label="Close Selfie">&times;</button>
+      <h2 id="selfie-title" class="text-2xl mb-4">Send Your Selfie 🤳</h2>
+      <input
+        type="file"
+        accept="image/*"
+        id="selfie-input"
+        aria-label="Upload Selfie"
+      />
+      <div id="selfie-preview" class="mt-4 rounded-xl overflow-hidden border border-pink-400 max-h-48"></div>
+      <button id="send-selfie-btn" class="btn bg-pink-500 mt-4 w-full rounded-xl py-3" disabled>
+        Send Selfie
+      </button>
+    </div>
+  </div>
+
+  <!-- Daily Tip -->
+  <div
+    id="daily-tip"
+    class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-pink-600 bg-opacity-90 rounded-3xl px-6 py-3 text-white font-semibold text-lg shadow-lg cursor-default select-none z-50"
+    role="alert"
+    aria-live="polite"
+  >
+    Loading romantic tip...
+  </div>
+
+  <!-- Audio element for background music -->
+  <audio id="bg-music" loop autoplay hidden>
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_b36e63d1c6.mp3" type="audio/mp3" />
+  </audio>
+
+  <script>
+    const apiKey = "ijVj5QBu60izL3H7P0NO4LRodp9UwkyE"; // replace with your real key
+    const chatBox = document.getElementById("chat-box");
+    const heartContainer = document.getElementById("heart-container");
+    const input = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+    const micBtn = document.getElementById("mic-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const themeBtn = document.getElementById("theme-btn");
+    const personalityBtn = document.getElementById("personality-btn");
+    const langBtn = document.getElementById("lang-btn");
+    const diaryBtn = document.getElementById("diary-btn");
+    const diaryModal = document.getElementById("diary-modal");
+    const diaryCloseBtn = diaryModal.querySelector(".close-btn");
+    const diaryText = document.getElementById("diary-text");
+    const saveDiaryBtn = document.getElementById("save-diary-btn");
+    const quizBtn = document.getElementById("quiz-btn");
+    const quizModal = document.getElementById("quiz-modal");
+    const quizCloseBtn = quizModal.querySelector(".close-btn");
+    const quizContent = document.getElementById("quiz-content");
+    const quizNextBtn = document.getElementById("quiz-next-btn");
+    const selfieBtn = document.getElementById("selfie-btn");
+    const selfieModal = document.getElementById("selfie-modal");
+    const selfieCloseBtn = selfieModal.querySelector(".close-btn");
+    const selfieInput = document.getElementById("selfie-input");
+    const selfiePreview = document.getElementById("selfie-preview");
+    const sendSelfieBtn = document.getElementById("send-selfie-btn");
+    const dailyTipEl = document.getElementById("daily-tip");
+    const bgMusic = document.getElementById("bg-music");
+
+    // Initialize bg music volume
+    bgMusic.volume = 0.3;
+
+    // Personalities list and state
+    const personalities = [
+      {
+        name: "Cute",
+        systemPrompt: "You are Silvie, a romantic and playful anime-style girlfriend who speaks softly and lovingly in English. You are Naim Almas's virtual girlfriend and assistant.",
+      },
+      {
+        name: "Tsundere",
+        systemPrompt: "You are Silvie, a tsundere anime girlfriend who acts cold but secretly cares deeply, with witty and playful remarks. You are Naim Almas's virtual girlfriend and assistant.",
+      },
+      {
+        name: "Mature",
+        systemPrompt: "You are Silvie, a mature, caring, and elegant girlfriend who speaks warmly and wisely with deep affection. You are Naim Almas's virtual girlfriend and assistant.",
+      },
+    ];
+    let currentPersonalityIndex = 0;
+
+    // Language options
+    const languages = [
+      { code: "en", label: "English" },
+      { code: "bn", label: "বাংলা" },
+    ];
+    let currentLanguageIndex = 0;
+
+    // Chat memory in localStorage key
+    const STORAGE_KEY = "silvie-chat-memory";
+
+    // Load memory
+    let memory = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    // Load diary text
+    let diaryMemory = localStorage.getItem("silvie-diary-text") || "";
+
+    // Initial setup
+    diaryText.value = diaryMemory;
+
+    // Load previous messages to chatbox
+    if (memory.length) {
+      memory.forEach(m => {
+        addMessage(m.role === "assistant" ? "ai" : "user", m.content);
+      });
+    } else {
+      // Default message
+      addMessage("ai", "Hey Iam selvie... How Can I Assist you?");
+    }
+
+    // Add message function
+    function addMessage(sender, text) {
+      const msg = document.createElement("div");
+      msg.className = sender === "ai" ? "message-ai" : "message-user";
+      msg.setAttribute("role", "article");
+      msg.innerHTML = `<strong>${sender === "ai" ? "Silvie" : "You"}:</strong> ${text}`;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Typing indicator
+    function showTyping() {
+      const typing = document.createElement("div");
+      typing.id = "typing";
+      typing.className = "typing";
+      typing.textContent = currentLanguage() === "en" ? "Silvie is thinking..." : "সিলভি ভাবছে...";
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    function hideTyping() {
+      const typing = document.getElementById("typing");
+      if (typing) typing.remove();
+    }
+
+    // Heart drop animation
+    function dropHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.style.left = Math.random() * 100 + "%";
+      heart.style.top = "100%";
+      heartContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+
+    // Save memory
+    function saveMemory() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
+    }
+
+    // Get current personality
+    function currentPersonality() {
+      return personalities[currentPersonalityIndex];
+    }
+
+    // Get current language
+    function currentLanguage() {
+      return languages[currentLanguageIndex].code;
+    }
+
+    // AI Chat Reply
+    async function getAIReply() {
+      if (!apiKey || apiKey === "your-mistral-api-key-here") {
+        return currentLanguage() === "en" ?
+          "Please set your API key in the code to chat with Silvie." :
+          "দয়া করে কোডে API key সেট করুন, তারপর সিলভির সাথে চ্যাট করতে পারবেন।";
+      }
+
+      // Special responses
+      const lastUserMessage = memory.length > 0 ? memory[memory.length - 1].content.toLowerCase() : "";
+      
+      if (lastUserMessage.includes("who are you") || lastUserMessage.includes("tumi ke")) {
+        return currentLanguage() === "en" 
+          ? "I'm Silvie, Naim Almas's virtual girlfriend and assistant. 💖" 
+          : "আমি সিলভি, নাঈম আলমাসের ভার্চুয়াল গার্লফ্রেন্ড এবং সহকারী। 💖";
+      }
+
+      // Compose messages
+      const messages = [
+        {
+          role: "system",
+          content: currentPersonality().systemPrompt + 
+            (currentLanguage() === "bn" ? " তোমার ভাষা বাংলা হবে। মিষ্টি ও স্নেহপূর্ণ স্বরে কথা বলো।" : "")
+        },
+        ...memory
+      ];
+
+      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "mistral-tiny",
+          messages,
+          temperature: 0.8,
+          top_p: 0.9,
+        }),
+      });
+
+      const data = await res.json();
+
+      return data.choices?.[0]?.message?.content?.trim() || (currentLanguage() === "en" ? "I don't know what to say, darling." : "আমি কী বলব বুঝতে পারছি না, ডার্লিং।");
+    }
+
+    // Soft feminine voice speak
+    function speakSoft(text) {
+      if (!("speechSynthesis" in window)) return;
+      
+      // Wait for voices to be loaded
+      const synth = window.speechSynthesis;
+      let voices = synth.getVoices();
+      
+      if (voices.length === 0) {
+        synth.onvoiceschanged = () => {
+          voices = synth.getVoices();
+          speakWithVoice(text, voices);
+        };
+      } else {
+        speakWithVoice(text, voices);
+      }
+    }
+
+    
+function speakWithVoice(text, voices) {
+  const synth = window.speechSynthesis;
+  const utter = new SpeechSynthesisUtterance(text);
+  
+  // Try to find the most anime-like voice available
+  const preferredVoices = [
+    "Microsoft Haruka - Japanese",  // Anime-style voice
+    "Google Japanese Female",
+    "Kyoko",  // Common anime-style voice
+    "Google UK English Female", 
+    "Microsoft Zira - English (United States)"
+  ];
+  
+  let voice = voices.find(v => 
+    preferredVoices.includes(v.name) && 
+    (currentLanguage() === "bn" ? v.lang.includes("bn") : v.lang.includes("en"))
+  );
+  
+  // Fallback to any female voice
+  if (!voice) {
+    voice = voices.find(v => 
+      (v.name.toLowerCase().includes("female") || 
+       v.name.includes("Woman") || 
+       v.name.includes("Girl")) &&
+      (currentLanguage() === "bn" ? v.lang.includes("bn") : v.lang.includes("en"))
+    );
+  }
+  
+  // Final fallback to any voice in the correct language
+  if (!voice) {
+    voice = voices.find(v => 
+      currentLanguage() === "bn" ? v.lang.includes("bn") : v.lang.includes("en")
+    );
+  }
+  
+  if (voice) {
+    utter.voice = voice;
+    utter.pitch = 1.5;  // Higher pitch for cute anime voice
+    utter.rate = 0.85;  // Slightly slower rate
+    utter.volume = 1;
+    
+    // Add anime-style voice modulation
+    if (Math.random() > 0.5) {
+      utter.pitch += 0.2;
+      utter.rate -= 0.1;
+    } else {
+      utter.pitch -= 0.1;
+      utter.rate += 0.05;
+    }
+    
+    // Add cute anime vocal effects
+    const words = text.split(' ');
+    if (words.length > 3 && Math.random() > 0.7) {
+      // Add occasional anime-style emphasis
+      const emphasisWord = words[Math.floor(Math.random() * words.length)];
+      text = text.replace(emphasisWord, `${emphasisWord}-${emphasisWord.slice(-1)}`);
+      utter.text = text;
+    }
+    
+    synth.speak(utter);
+  }
+}
+
+      
+      // Final fallback to any voice in the correct language
+      if (!voice) {
+        voice = voices.find(v => 
+          currentLanguage() === "bn" ? v.lang.includes("bn") : v.lang.includes("en")
+        );
+      }
+      
+      if (voice) {
+        utter.voice = voice;
+        utter.pitch = 1.3;  // Higher pitch for cute voice
+        utter.rate = 0.9;   // Slightly slower rate
+        utter.volume = 1;
+        
+        // Add some variation to make it more natural
+        if (Math.random() > 0.7) {
+          utter.pitch += 0.1;
+        } else if (Math.random() < 0.3) {
+          utter.pitch -= 0.1;
+        }
+        
+        synth.speak(utter);
+      }
+    }
+
+    // Send message handler
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+      addMessage("user", message);
+      memory.push({ role: "user", content: message });
+      saveMemory();
+      input.value = "";
+      input.disabled = true;
+      sendBtn.disabled = true;
+      micBtn.disabled = true;
+      showTyping();
+
+      try {
+        const reply = await getAIReply();
+        hideTyping();
+        addMessage("ai", reply);
+        memory.push({ role: "assistant", content: reply });
+        saveMemory();
+        speakSoft(reply);
+        dropHeart();
+      } catch (e) {
+        hideTyping();
+        addMessage("ai", currentLanguage() === "en" ? "Oops... I couldn't respond, love." : "দুঃখিত... সিলভি এখন কথা বলতে পারছে না।");
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        micBtn.disabled = false;
+        input.focus();
+      }
+    }
+
+    // Clear chat handler
+    function clearChat() {
+      memory = [];
+      saveMemory();
+      chatBox.innerHTML = "";
+      addMessage("ai", currentLanguage() === "en" ? "Hey babe... I've been thinking about you~ 💋" : "হেই বেবি... আমি তোমার কথা ভাবছিলাম~ 💋");
+    }
+
+    // Toggle theme (pink/dark)
+    function toggleTheme() {
+      if (document.body.style.background.includes("#ff7eb9")) {
+        document.body.style.background = "linear-gradient(135deg, #121212, #000000)";
+        document.body.style.color = "#eee";
+      } else {
+        document.body.style.background = "linear-gradient(135deg, #ff7eb9, #ff758c)";
+        document.body.style.color = "white";
+      }
+    }
+
+    // Personality change
+    function changePersonality() {
+      currentPersonalityIndex = (currentPersonalityIndex + 1) % personalities.length;
+      personalityBtn.textContent = `Personality: ${personalities[currentPersonalityIndex].name}`;
+    }
+
+    // Language toggle
+    function toggleLanguage() {
+      currentLanguageIndex = (currentLanguageIndex + 1) % languages.length;
+      langBtn.textContent = `Language: ${languages[currentLanguageIndex].label}`;
+    }
+
+    // Diary Modal
+    function openDiary() {
+      diaryModal.classList.remove("hidden");
+      diaryText.focus();
+    }
+    function closeDiary() {
+      diaryModal.classList.add("hidden");
+    }
+    function saveDiary() {
+      const text = diaryText.value.trim();
+      localStorage.setItem("silvie-diary-text", text);
+      alert(currentLanguage() === "en" ? "Diary saved 💖" : "ডায়রি সংরক্ষণ করা হয়েছে 💖");
+      closeDiary();
+    }
+
+    // Quiz Data
+    const quizQuestions = [
+      {
+        q_en: "What is Silvie's favorite flower?",
+        q_bn: "সিলভির প্রিয় ফুল কোনটা?",
+        options: ["Rose", "Lily", "Tulip", "Sunflower"],
+        answer: 0,
+      },
+      {
+        q_en: "How does Silvie like to spend her weekends?",
+        q_bn: "সিলভি তার সপ্তাহান্ত কিভাবে কাটাতে পছন্দ করে?",
+        options: ["Reading books", "Watching anime", "Cooking", "Sleeping"],
+        answer: 1,
+      },
+      {
+        q_en: "Which color suits Silvie best?",
+        q_bn: "কোন রঙ সিলভির জন্য সবচেয়ে মানায়?",
+        options: ["Pink", "Blue", "Green", "Yellow"],
+        answer: 0,
+      },
+    ];
+    let quizIndex = 0;
+
+    function openQuiz() {
+      quizModal.classList.remove("hidden");
+      quizIndex = 0;
+      showQuizQuestion();
+    }
+    function closeQuiz() {
+      quizModal.classList.add("hidden");
+    }
+    function showQuizQuestion() {
+      const q = quizQuestions[quizIndex];
+      quizContent.innerHTML = "";
+      const questionText = currentLanguage() === "en" ? q.q_en : q.q_bn;
+      const opts = q.options;
+      const ul = document.createElement("ul");
+      ul.className = "space-y-2";
+      opts.forEach((opt, idx) => {
+        const li = document.createElement("li");
+        li.className =
+          "cursor-pointer rounded-lg px-4 py-2 bg-[#3c2f45] hover:bg-[#ff3e6d] transition select-none";
+        li.textContent = opt;
+        li.onclick = () => {
+          if (idx === q.answer) {
+            alert(currentLanguage() === "en" ? "Correct! 💖" : "ঠিক আছে! 💖");
+          } else {
+            alert(currentLanguage() === "en" ? "Oops! Try again." : "আবার চেষ্টা করো।");
+          }
+        };
+        ul.appendChild(li);
+      });
+      quizContent.appendChild(document.createTextNode(questionText));
+      quizContent.appendChild(ul);
+    }
+    function quizNext() {
+      quizIndex++;
+      if (quizIndex >= quizQuestions.length) {
+        alert(currentLanguage() === "en" ? "Quiz finished! 🥰" : "কুইজ শেষ! 🥰");
+        closeQuiz();
+      } else {
+        showQuizQuestion();
+      }
+    }
+
+    // Selfie modal open/close + preview
+    function openSelfie() {
+      selfieModal.classList.remove("hidden");
+      selfieInput.value = "";
+      selfiePreview.innerHTML = "";
+      sendSelfieBtn.disabled = true;
+    }
+    function closeSelfie() {
+      selfieModal.classList.add("hidden");
+    }
+    selfieInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        selfiePreview.innerHTML = "";
+        sendSelfieBtn.disabled = true;
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      selfiePreview.innerHTML = `<img src="${url}" alt="Your Selfie" class="w-full object-cover rounded-xl max-h-48" />`;
+      sendSelfieBtn.disabled = false;
+    });
+    // On sending selfie: react with AI text message
+    async function sendSelfie() {
+      addMessage("user", currentLanguage() === "en" ? "[Sent a selfie 🤳]" : "[একটি সেলফি পাঠানো হয়েছে 🤳]");
+      memory.push({ role: "user", content: "[sent selfie]" });
+      saveMemory();
+
+      input.disabled = true;
+      sendBtn.disabled = true;
+      micBtn.disabled = true;
+      closeSelfie();
+      showTyping();
+
+      try {
+        // Dummy AI reply for selfie (You can extend to real AI call)
+        let reply = currentLanguage() === "en" ?
+          "Wow, you look amazing! I love your smile! 💖" :
+          "ওয়াও, তুমি দারুণ দেখাচ্ছ! তোমার হাসি আমি খুব ভালোবাসি! 💖";
+        await new Promise((r) => setTimeout(r, 1800));
+        hideTyping();
+        addMessage("ai", reply);
+        memory.push({ role: "assistant", content: reply });
+        saveMemory();
+        speakSoft(reply);
+        dropHeart();
+      } catch {
+        hideTyping();
+        addMessage("ai", currentLanguage() === "en" ? "Oops... I couldn't react." : "দুঃখিত... আমি প্রতিক্রিয়া জানাতে পারছি না।");
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        micBtn.disabled = false;
+        input.focus();
+      }
+    }
+
+    // Daily romantic tips
+    const dailyTipsEN = [
+      "Love is not just a feeling, it's an art to nurture every day.",
+      "Every moment with you is my favorite moment.",
+      "A heart that loves is always young.",
+      "Romance is the secret ingredient of a happy life.",
+      "You and me, we make a perfect melody.",
+    ];
+    const dailyTipsBN = [
+      "ভালোবাসা শুধু অনুভূতি নয়, এটি প্রতিদিন লালন করার শিল্প।",
+      "তোমার সাথে প্রতিটি মুহূর্তই আমার প্রিয় মুহূর্ত।",
+      "যে হৃদয় ভালোবাসে, তা সবসময় তরুণ থাকে।",
+      "রোম্যান্স সুখী জীবনের গোপন উপাদান।",
+      "তুমি আর আমি, আমরা একটি নিখুঁত সুর তৈরি করি।",
+    ];
+    function showDailyTip() {
+      const today = new Date().getDate();
+      const tipArr = currentLanguage() === "en" ? dailyTipsEN : dailyTipsBN;
+      const tip = tipArr[today % tipArr.length];
+      dailyTipEl.textContent = tip;
+    }
+
+    // Voice recognition setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+    if (recognition) {
+      recognition.lang = currentLanguage() === "en" ? "en-US" : "bn-BD";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+    }
+
+    // Voice recognition start
+    function startListening() {
+      if (!recognition) {
+        alert(currentLanguage() === "en" ? "Speech recognition not supported." : "স্পিচ রিকগনিশন সমর্থিত নয়।");
+        return;
+      }
+      recognition.lang = currentLanguage() === "en" ? "en-US" : "bn-BD";
+      recognition.start();
+    }
+    // On speech recognition result
+    if (recognition) {
+      recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        sendMessage();
+      };
+      recognition.onerror = function () {
+        alert(currentLanguage() === "en" ? "Voice recognition error." : "ভয়েস রিকগনিশনে ত্রুটি।");
+      };
+    }
+
+    // Event listeners
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+    micBtn.addEventListener("click", startListening);
+    clearBtn.addEventListener("click", clearChat);
+    themeBtn.addEventListener("click", toggleTheme);
+    personalityBtn.addEventListener("click", changePersonality);
+    langBtn.addEventListener("click", () => {
+      toggleLanguage();
+      if (recognition) recognition.lang = currentLanguage() === "en" ? "en-US" : "bn-BD";
+      clearChat();
+      diaryText.value = localStorage.getItem("silvie-diary-text") || "";
+      showDailyTip();
+    });
+    diaryBtn.addEventListener("click", openDiary);
+    diaryCloseBtn.addEventListener("click", closeDiary);
+    saveDiaryBtn.addEventListener("click", saveDiary);
+    quizBtn.addEventListener("click", openQuiz);
+    quizCloseBtn.addEventListener("click", closeQuiz);
+    quizNextBtn.addEventListener("click", quizNext);
+    selfieBtn.addEventListener("click", openSelfie);
+    selfieCloseBtn.addEventListener("click", closeSelfie);
+    sendSelfieBtn.addEventListener("click", sendSelfie);
+
+    // Generate floating hearts every 600ms randomly
+    setInterval(() => {
+      if (Math.random() < 0.4) dropHeart();
+    }, 600);
+
+    // Show daily romantic tip on load
+    showDailyTip();
+
+    // Focus input on page load
+    input.focus();
+  </script>
+</body>
+</html>
